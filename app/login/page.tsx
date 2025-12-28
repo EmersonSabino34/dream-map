@@ -47,27 +47,29 @@ export default function Login() {
     }
   }[lang];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Login:", { email, senha });
   };
 
   return (
-    <div className="auth-container" style={{ background: "linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%)", minHeight: "100vh" }}>
+    <div className="auth-container" style={{ background: "linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div className="auth-card" style={{
         background: "white",
         borderRadius: "24px",
         boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
         maxWidth: "480px",
+        width: "100%",
         padding: "2.5rem",
-        margin: "auto"
+        margin: "1rem"
       }}>
         {/* Seletor de Idioma */}
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem", gap: "0.75rem" }}>
-          {["pt", "en", "es"].map((l) => (
+          {(["pt", "en", "es"] as const).map((l) => (
             <button
               key={l}
-              onClick={() => setLang(l as any)}
+              onClick={() => setLang(l)}
+              type="button"
               style={{
                 padding: "0.5rem 1rem",
                 background: lang === l ? "linear-gradient(135deg, #a78bfa, #c084fc)" : "rgba(167, 139, 250, 0.1)",
@@ -86,7 +88,7 @@ export default function Login() {
         </div>
 
         <div className="auth-header" style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(135deg, #a78bfa, #93c5fd)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(135deg, #a78bfa, #93c5fd)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
             {t.welcome}
           </h1>
           <p style={{ color: "#6b7280", fontSize: "1.125rem" }}>{t.subtitle}</p>
@@ -95,8 +97,8 @@ export default function Login() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           {/* Campos de input */}
           {[
-            { label: t.email, placeholder: t.emailPlaceholder, value: email, onChange: setEmail, type: "email" },
-            { label: t.password, placeholder: t.passwordPlaceholder, value: senha, onChange: setSenha, type: "password" },
+            { label: t.email, placeholder: t.emailPlaceholder, value: email, onChange: setEmail, type: "email" as const },
+            { label: t.password, placeholder: t.passwordPlaceholder, value: senha, onChange: setSenha, type: "password" as const },
           ].map((field, i) => (
             <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               <label style={{ fontWeight: "600", color: "#374151" }}>{field.label}</label>
@@ -113,8 +115,8 @@ export default function Login() {
                   fontSize: "1rem",
                   transition: "border 0.3s",
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#a78bfa"}
-                onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
+                onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#a78bfa"; }}
+                onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e5e7eb"; }}
               />
             </div>
           ))}
@@ -139,8 +141,8 @@ export default function Login() {
               boxShadow: "0 10px 20px rgba(167, 139, 250, 0.3)",
               transition: "transform 0.2s"
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-4px)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-4px)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}
           >
             {t.enter}
           </button>
