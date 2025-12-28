@@ -1,0 +1,105 @@
+/* ========================================
+   RESPONSIVIDADE PARA MURAIS - ENQUADRAMENTO PERFEITO
+   ======================================== */
+
+/* Estilos base para garantir enquadramento perfeito */
+div[id^="mural-"] {
+  width: 100%;
+  overflow: hidden;
+}
+
+div[id^="mural-"] > div {
+  overflow: hidden;
+  position: relative;
+  background: #f0f0f0;
+}
+
+div[id^="mural-"] img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  max-width: none !important;
+}
+
+div[id^="mural-"] svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+/* Tablets e dispositivos médios (1024px e abaixo) */
+@media (max-width: 1024px) {
+  /* Ajustar murais para telas menores */
+  div[id^="mural-"] {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  }
+  
+  div[id^="mural-"] > div {
+    min-height: 150px !important;
+  }
+}
+
+/* Smartphones em landscape e tablets pequenos (768px e abaixo) */
+@media (max-width: 768px) {
+  /* Murais com menos colunas */
+  div[id="mural-1"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(5, 150px) !important;
+  }
+  
+  div[id="mural-2"] {
+    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-rows: repeat(4, 140px) !important;
+  }
+  
+  div[id="mural-3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(8, 130px) !important;
+  }
+  
+  div[id="mural-4"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(5, 120px) !important;
+  }
+  
+  div[id="mural-5"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(5, 150px) !important;
+  }
+}
+
+/* Smartphones em portrait (480px e abaixo) */
+@media (max-width: 480px) {
+  /* Murais com 2 colunas para melhor visualização em telas pequenas */
+  div[id="mural-1"],
+  div[id="mural-2"],
+  div[id="mural-3"],
+  div[id="mural-4"],
+  div[id="mural-5"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: auto !important;
+    gap: 0.2rem !important;
+    padding: 0.2rem !important;
+  }
+  
+  div[id^="mural-"] > div {
+    min-height: 120px !important;
+    height: 120px !important;
+  }
+  
+  /* Resetar spans para mobile - todas as imagens ocupam 1 célula */
+  div[id^="mural-"] > div {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+}
+
+/* Smartphones muito pequenos (360px e abaixo) */
+@media (max-width: 360px) {
+  div[id^="mural-"] > div {
+    min-height: 100px !important;
+    height: 100px !important;
+  }
+}
