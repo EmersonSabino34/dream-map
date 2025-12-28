@@ -31,7 +31,7 @@ export default function Dashboard() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      background: "linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%)",
       padding: "2rem",
     }}>
       <div style={{
@@ -43,51 +43,64 @@ export default function Dashboard() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "2rem",
+          background: "white",
+          borderRadius: "20px",
+          padding: "2rem",
+          boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
         }}>
           <div>
             <h1 style={{
-              color: "white",
               fontSize: "2.5rem",
+              fontWeight: "bold",
+              background: "linear-gradient(135deg, #a78bfa, #93c5fd)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
               marginBottom: "0.5rem",
             }}>
               {t.welcome}
             </h1>
             <p style={{
-              color: "rgba(255, 255, 255, 0.9)",
-              fontSize: "1.1rem",
+              color: "#6b7280",
+              fontSize: "1.125rem",
             }}>
               {t.subtitle}
             </p>
           </div>
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value as "pt" | "en" | "es")}
-              style={{
-                padding: "0.5rem 1rem",
-                borderRadius: "8px",
-                border: "2px solid white",
-                background: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                fontSize: "1rem",
-                cursor: "pointer",
-              }}
-            >
-              <option value="pt">🇧🇷 Português</option>
-              <option value="en">🇺🇸 English</option>
-              <option value="es">🇪🇸 Español</option>
-            </select>
+          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+            {(["pt", "en", "es"] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                type="button"
+                style={{
+                  padding: "0.5rem 1rem",
+                  background: lang === l ? "linear-gradient(135deg, #a78bfa, #c084fc)" : "rgba(167, 139, 250, 0.1)",
+                  border: `2px solid ${lang === l ? "#a78bfa" : "rgba(167, 139, 250, 0.3)"}`,
+                  borderRadius: "12px",
+                  color: lang === l ? "white" : "#374151",
+                  cursor: "pointer",
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  transition: "all 0.3s"
+                }}
+              >
+                {l === "pt" ? "🇧🇷 PT" : l === "en" ? "🇺🇸 EN" : "🇪🇸 ES"}
+              </button>
+            ))}
             <button
               onClick={() => router.push("/")}
               style={{
-                padding: "0.5rem 1.5rem",
-                background: "white",
-                color: "#667eea",
+                padding: "0.75rem 1.5rem",
+                background: "linear-gradient(135deg, #a78bfa, #c084fc)",
+                color: "white",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: "12px",
                 cursor: "pointer",
                 fontSize: "1rem",
                 fontWeight: "600",
+                boxShadow: "0 4px 12px rgba(167, 139, 250, 0.3)",
+                transition: "all 0.3s",
               }}
             >
               {t.logout}
@@ -102,38 +115,62 @@ export default function Dashboard() {
         }}>
           <div style={{
             background: "white",
-            borderRadius: "16px",
+            borderRadius: "20px",
             padding: "2rem",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
           }}>
-            <h2 style={{ color: "#667eea", marginBottom: "1rem" }}>
+            <h2 style={{ 
+              background: "linear-gradient(135deg, #a78bfa, #93c5fd)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              marginBottom: "1rem",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}>
               📊 Estatísticas
             </h2>
-            <p style={{ color: "#666" }}>Em breve...</p>
+            <p style={{ color: "#6b7280" }}>Em breve...</p>
           </div>
 
           <div style={{
             background: "white",
-            borderRadius: "16px",
+            borderRadius: "20px",
             padding: "2rem",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
           }}>
-            <h2 style={{ color: "#667eea", marginBottom: "1rem" }}>
+            <h2 style={{ 
+              background: "linear-gradient(135deg, #a78bfa, #93c5fd)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              marginBottom: "1rem",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}>
               🎯 Objetivos
             </h2>
-            <p style={{ color: "#666" }}>Em breve...</p>
+            <p style={{ color: "#6b7280" }}>Em breve...</p>
           </div>
 
           <div style={{
             background: "white",
-            borderRadius: "16px",
+            borderRadius: "20px",
             padding: "2rem",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
           }}>
-            <h2 style={{ color: "#667eea", marginBottom: "1rem" }}>
+            <h2 style={{ 
+              background: "linear-gradient(135deg, #a78bfa, #93c5fd)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              marginBottom: "1rem",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}>
               ⭐ Sonhos
             </h2>
-            <p style={{ color: "#666" }}>Em breve...</p>
+            <p style={{ color: "#6b7280" }}>Em breve...</p>
           </div>
         </div>
       </div>
