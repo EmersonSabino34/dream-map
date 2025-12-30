@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
+
 export default function CheckoutPage() {
   const [amount, setAmount] = useState<number>(33);
   const [currencySymbol, setCurrencySymbol] = useState<string>('R$');
