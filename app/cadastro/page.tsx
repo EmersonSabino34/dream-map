@@ -111,6 +111,7 @@ export default function Cadastro() {
         transform: "perspective(1000px)",
         animation: "cardFloat 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
       }}>
+        
         {/* Seletor de Idioma */}
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem", gap: "0.75rem" }}>
           {(["pt", "en", "es"] as const).map((l) => (
