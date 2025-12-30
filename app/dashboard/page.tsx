@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+
 export default function Dashboard() {
   const router = useRouter();
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
