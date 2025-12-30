@@ -64,6 +64,7 @@ export default function Login() {
       position: "relative",
       overflow: "hidden"
     }}>
+      
       <div className="auth-card" style={{
         background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 50%, #f0f0f0 100%)",
         borderRadius: "24px",
