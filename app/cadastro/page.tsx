@@ -34,6 +34,7 @@ export default function Cadastro() {
       haveAccount: "Já tem uma conta?",
       login: "Faça login",
     },
+    
     en: {
       title: "⭐ Start your journey",
       subtitle: "Create your account and turn your dreams into reality",
