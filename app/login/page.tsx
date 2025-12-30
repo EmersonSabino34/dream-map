@@ -34,6 +34,7 @@ export default function Login() {
       noAccount: "Don't have an account?",
       signUpNow: "Sign up now",
     },
+    
     es: {
       welcome: "⭐ ¡Bienvenido de nuevo!",
       subtitle: "Inicia sesión en tu cuenta para acceder a tu Dream Map",
