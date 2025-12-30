@@ -1,0 +1,154 @@
+/* Animações globais para o app 3D */
+
+@keyframes cardFloat {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(50px) rotateX(-10deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) translateY(0) rotateX(0deg) scale(1);
+  }
+}
+
+@keyframes titleShine {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes pricePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(52, 152, 219, 0.6), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes benefitSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Estilos base para elementos de autenticação */
+.auth-container {
+  perspective: 1500px;
+}
+
+.auth-card {
+  transform-style: preserve-3d;
+}
+
+/* Efeito de textura de madeira branca */
+.wood-texture {
+  position: relative;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 50%, #f0f0f0 100%);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wood-texture::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.02) 2px,
+      rgba(0, 0, 0, 0.02) 4px
+    );
+  pointer-events: none;
+}
+
+/* Efeito de flutuação */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Efeito de brilho */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Botões 3D globais */
+.btn-3d {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-3d:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.3),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-3d:active {
+  transform: translateY(-2px) scale(1);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Card 3D */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.card-3d:hover {
+  transform: translateY(-10px) rotateX(2deg);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}

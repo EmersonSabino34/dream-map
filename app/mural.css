@@ -1,0 +1,648 @@
+/* Estilo: Placa de madeira (indicadores de caminhos/locais) */
+
+.wood-board {
+  position: relative;
+  background: linear-gradient(180deg, #6b4526 0%, #5a391f 50%, #4b2f1a 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.06);
+  border: 2px solid rgba(0,0,0,0.35);
+  overflow: visible;
+}
+
+.wood-board::before {
+  /* madeiras horizontais (veios) */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.03) 0.5px, transparent 0.5px);
+  background-size: 100% 12px;
+  opacity: 0.6;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+.wood-board::after {
+  /* parafusos/rebites nas quinas */
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 40% 35%, #f5f2ee 0%, #b09374 40%, #6b4a2e 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border-radius: 50%;
+  left: 12px;
+  top: 12px;
+}
+
+.wood-board .bolt-right {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 40% 35%, #f5f2ee 0%, #b09374 40%, #6b4a2e 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border-radius: 50%;
+  right: 12px;
+  top: 12px;
+}
+
+.wood-board .bolt-bottom-left {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 40% 35%, #f5f2ee 0%, #b09374 40%, #6b4a2e 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border-radius: 50%;
+  left: 12px;
+  bottom: 12px;
+}
+
+.wood-board .bolt-bottom-right {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 40% 35%, #f5f2ee 0%, #b09374 40%, #6b4a2e 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border-radius: 50%;
+  right: 12px;
+  bottom: 12px;
+}
+
+.wood-board .wood-notch {
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 12px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.15), rgba(255,255,255,0.02));
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.03);
+}
+
+.wood-board-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  animation: contentSlideIn 0.6s ease-out 0.2s backwards;
+}
+
+@keyframes contentSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Variante rústica (seta/placa): aplica quando body tem classe .wood-style--rustic */
+.wood-style--rustic .wood-board {
+  background: linear-gradient(90deg, #6b3f22 0%, #532f18 50%, #3f2312 100%);
+  border-radius: 6px;
+  padding: 2rem 3.5rem 2rem 2.5rem;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5), inset 0 -6px 18px rgba(0,0,0,0.35);
+  border: 4px solid rgba(0,0,0,0.45);
+}
+
+.wood-style--rustic .wood-board::before {
+  background-image: linear-gradient(90deg, rgba(0,0,0,0.12) 0.5px, transparent 0.5px);
+  background-size: 100% 8px;
+  opacity: 0.7;
+}
+
+.wood-style--rustic .wood-board::after {
+  /* mantem o parafuso superior esquerdo, ajusta cor */
+  left: 10px;
+  top: 10px;
+  background: radial-gradient(circle at 40% 35%, #fff6ef 0%, #a07956 35%, #3f2414 100%);
+}
+
+.wood-style--rustic .wood-board .bolt-right {
+  right: 12px;
+  top: 10px;
+  background: radial-gradient(circle at 40% 35%, #fff6ef 0%, #a07956 35%, #3f2414 100%);
+}
+
+.wood-style--rustic .wood-board .bolt-bottom-left {
+  left: 12px;
+  bottom: 12px;
+}
+
+.wood-style--rustic .wood-board .bolt-bottom-right {
+  right: 12px;
+  bottom: 12px;
+}
+
+.wood-style--rustic .wood-board::before {
+  /* adiciona seta apontando à esquerda usando gradiente e máscara */
+  content: '';
+  position: absolute;
+  left: -48px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 24px solid transparent;
+  border-bottom: 24px solid transparent;
+  border-right: 48px solid rgba(0,0,0,0.25);
+  filter: drop-shadow(-4px 4px 6px rgba(0,0,0,0.4));
+}
+
+.wood-style--rustic .board-title {
+  color: #fff6e8;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+/* Brick board: estilo tijolos brancos rústicos (para perfis) */
+.brick-board {
+  position: relative;
+  background-color: #f6f5f3;
+  background-image:
+    linear-gradient(0deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 40px 24px, 40px 24px;
+  background-position: 0 0, 20px 12px;
+  border-radius: 8px;
+  padding: 2rem 2.5rem;
+  color: #2c3e50;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06), inset 0 2px 0 rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: visible;
+}
+
+.brick-board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.6) 0.5px, transparent 0.5px);
+  background-size: 100% 12px;
+  opacity: 0.45;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.brick-board::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 40% 35%, #ffffff 0%, #e0d6cc 40%, rgba(0,0,0,0.06) 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  border-radius: 50%;
+  left: 12px;
+  top: 12px;
+  opacity: 0.95;
+}
+
+.brick-board .bolt-right,
+.brick-board .bolt-bottom-left,
+.brick-board .bolt-bottom-right {
+  background: radial-gradient(circle at 40% 35%, #ffffff 0%, #e0d6cc 40%, rgba(0,0,0,0.06) 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.brick-board .brick-notch { display: none; }
+
+.brick-board .brick-board-content {
+  position: relative;
+  z-index: 1;
+  color: #2c3e50;
+  animation: contentSlideIn 0.6s ease-out 0.2s backwards;
+}
+
+.brick-board .board-title {
+  color: #2c3e50;
+  text-shadow: none;
+  border-bottom: 3px solid rgba(0,0,0,0.06);
+}
+
+/* White rustic wood wall: parede branca de madeira rústica */
+.white-wood-board {
+  position: relative;
+  background-color: #f7f6f4;
+  /* horizontais simulando tábuas */
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,0.02) 0.5px, transparent 0.5px),
+    repeating-linear-gradient(180deg, rgba(0,0,0,0.03) 0 1px, rgba(0,0,0,0.03) 2px, transparent 2px 48px);
+  background-size: 100% 24px, 100% 48px;
+  background-position: 0 0, 0 0;
+  border-radius: 8px;
+  padding: 2rem 2.5rem;
+  color: #2c3e50;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06), inset 0 2px 0 rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: visible;
+}
+
+.white-wood-board::before {
+  /* seams between planks (mais escuro, sutil) */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-image: repeating-linear-gradient(180deg, transparent 0 46px, rgba(0,0,0,0.04) 46px, rgba(0,0,0,0.04) 48px);
+  opacity: 0.35;
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+.white-wood-board::after {
+  /* pequenos nós e textura suave */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 10% 30%, rgba(0,0,0,0.02) 0%, transparent 10%),
+    radial-gradient(circle at 70% 60%, rgba(0,0,0,0.015) 0%, transparent 14%),
+    radial-gradient(circle at 40% 15%, rgba(0,0,0,0.01) 0%, transparent 8%);
+  opacity: 0.25;
+  mix-blend-mode: multiply;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.white-wood-board .bolt-right,
+.white-wood-board .bolt-bottom-left,
+.white-wood-board .bolt-bottom-right {
+  background: radial-gradient(circle at 40% 35%, #ffffff 0%, #e6e0d8 40%, rgba(0,0,0,0.04) 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.white-wood-board .white-wood-board-content {
+  position: relative;
+  z-index: 1;
+  color: #2c3e50;
+  animation: contentSlideIn 0.6s ease-out 0.2s backwards;
+}
+
+.white-wood-board .board-title {
+  color: #2c3e50;
+  text-shadow: none;
+  border-bottom: 3px solid rgba(0,0,0,0.06);
+}
+
+/* Container que posiciona as datas de forma mais livre/aleatória */
+.dates-random-container {
+  position: relative;
+  min-height: 180px;
+  width: 100%;
+  margin-top: 0.5rem;
+  overflow: visible;
+}
+
+/* Pequeninas placas de madeira para os ícones das datas */
+.date-tile {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.6rem;
+  background: linear-gradient(180deg, #eadfcf 0%, #d9c7b3 100%);
+  color: #2c3e50;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.09);
+  border: 1px solid rgba(0,0,0,0.06);
+  transform: rotate(-3deg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.date-tile .date-icon {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #fffdf9 0%, #f0e6db 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(0,0,0,0.06);
+  font-size: 0.85rem;
+}
+
+.date-tile .date-icon {
+  color: #6b4a2e;
+}
+
+.date-tile .date-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.date-tile .date-label {
+  display: inline-block;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0.2px;
+}
+
+.date-tile input[type="checkbox"] {
+  display: none;
+}
+
+.date-tile.checked {
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+  transform: rotate(0deg) scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .date-tile { font-size: 0.78rem; padding: 0.35rem 0.5rem; }
+  .date-tile .date-icon { width: 24px; height: 24px; min-width: 24px; }
+}
+
+.mural-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.mural-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  animation: backgroundShift 10s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.mural-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+/* Badge com logo e ano para cada mural */
+.mural-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255,255,255,0.95);
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.16);
+  border: 1px solid rgba(0,0,0,0.06);
+  z-index: 6;
+}
+
+.mural-badge img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.mural-badge .mural-year {
+  font-weight: 800;
+  color: #2c2c2c;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .mural-badge { top: 12px; left: 12px; padding: 6px 10px; gap: 0.5rem; }
+  .mural-badge img { height: 32px; }
+  .mural-badge .mural-year { font-size: 0.95rem; }
+}
+
+@media (max-width: 480px) {
+  .mural-badge { top: 8px; left: 8px; padding: 5px 8px; gap: 0.4rem; }
+  .mural-badge img { height: 26px; }
+  .mural-badge .mural-year { font-size: 0.85rem; }
+}
+
+.board-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 3px solid rgba(44, 62, 80, 0.2);
+  padding-bottom: 0.75rem;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  animation: titleFadeIn 0.8s ease-out;
+}
+
+@keyframes titleFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.board-input,
+.board-select {
+  width: 100%;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(44, 62, 80, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #2c3e50;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.board-input:focus,
+.board-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.02);
+}
+
+.board-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(44, 62, 80, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #2c3e50;
+  resize: vertical;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.board-textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.01);
+}
+
+.board-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: #34495e;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: labelPulse 2s ease-in-out infinite;
+}
+
+@keyframes labelPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.board-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.board-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(44, 62, 80, 0.1);
+}
+
+.board-checkbox:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateX(8px) scale(1.02);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.board-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #3498db;
+}
+
+.board-checkbox-label {
+  color: #2c3e50;
+  font-size: 1rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+}
+
+.save-button {
+  margin-top: 2rem;
+  padding: 1.25rem 3.5rem;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4),
+              inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.save-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.save-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.save-button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(52, 152, 219, 0.6),
+              inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.save-button:active {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+}
+
+/* Animação de entrada */
+@keyframes boardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px) rotateX(-15deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
+  }
+}
+
+.wood-board {
+  animation: boardSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.wood-board:nth-child(1) { animation-delay: 0.1s; opacity: 0; }
+.wood-board:nth-child(2) { animation-delay: 0.2s; opacity: 0; }
+.wood-board:nth-child(3) { animation-delay: 0.3s; opacity: 0; }
+.wood-board:nth-child(4) { animation-delay: 0.4s; opacity: 0; }
+.wood-board:nth-child(5) { animation-delay: 0.5s; opacity: 0; }
+.wood-board:nth-child(6) { animation-delay: 0.6s; opacity: 0; }
+
+/* Efeito de brilho nas bordas */
+.wood-board-highlight {
+  border: 3px solid rgba(52, 152, 219, 0.7);
+  box-shadow: 
+    0 15px 40px rgba(52, 152, 219, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9),
+    0 0 20px rgba(52, 152, 219, 0.3);
+  animation: highlightPulse 2s ease-in-out infinite;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    box-shadow: 
+      0 15px 40px rgba(52, 152, 219, 0.4),
+      inset 0 2px 4px rgba(255, 255, 255, 0.9),
+      0 0 20px rgba(52, 152, 219, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 20px 50px rgba(52, 152, 219, 0.6),
+      inset 0 2px 4px rgba(255, 255, 255, 1),
+      0 0 30px rgba(52, 152, 219, 0.5);
+  }
+}

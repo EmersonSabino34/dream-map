@@ -30,6 +30,22 @@ body {
   padding: 2rem 1rem;
 }
 
+/* Header com logo */
+.app-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0 0.5rem 0;
+}
+
+.app-logo {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
 /* RESPONSIVIDADE - TABLETS */
 @media (max-width: 1024px) {
   body {

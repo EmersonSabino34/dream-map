@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./responsive-murais.css";
+import "./mural.css";
+import "./animations.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="app-header">
+          <a href="/">
+            <img src="/assets/logo/logo1.png" alt="Sonhos - logo" className="app-logo" />
+          </a>
+        </header>
         {children}
       </body>
     </html>

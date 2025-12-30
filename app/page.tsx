@@ -10,6 +10,10 @@ type Imagem = {
 };
 
 const imagensInternet: Imagem[] = [
+  // Imagens locais dos assets/boards
+  { src: "/assets/boards/2.jpg", tema: "pessoal" },
+  { src: "/assets/boards/3.jpg", tema: "pessoal" },
+
   // Carros dos sonhos
   { src: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400", tema: "carro" },
   { src: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400", tema: "carro" },
@@ -98,7 +102,11 @@ const frasesImagensMotivacionais: Imagem[] = [
 
 export default function Home() {
   const [lang, setLang] = useState<Language>("pt");
+  const [woodStyle, setWoodStyle] = useState<"plaque"|"rustic">("plaque");
   const [imagens, setImagens] = useState<Imagem[]>(imagensInternet);
+  const [selectedTemplate, setSelectedTemplate] = useState<number>(1);
+  const [replacements, setReplacements] = useState<Record<number, Record<number, string>>>({});
+  const [showVerses, setShowVerses] = useState<boolean>(true);
   const [destaque, setDestaque] = useState<Imagem>(imagensInternet[0]);
   const [usarGaleria, setUsarGaleria] = useState(false);
   const [fraseIndex, setFraseIndex] = useState(0);
@@ -109,6 +117,15 @@ export default function Home() {
   const [dataComemorativa, setDataComemorativa] = useState("");
 
   const t = translations[lang];
+
+  useEffect(() => {
+    const cls = `wood-style--${woodStyle}`;
+    document.body.classList.remove("wood-style--plaque", "wood-style--rustic");
+    document.body.classList.add(cls);
+    return () => {
+      document.body.classList.remove(cls);
+    };
+  }, [woodStyle]);
 
   // Combinar imagens com frases motivacionais se opção estiver ativa
   const imagensFinais = incluirFrases ? [...imagens, ...frasesImagensMotivacionais] : imagens;
@@ -211,6 +228,87 @@ export default function Home() {
     }
   };
 
+  // Templates thumbnails: loaded from manifest in public/assets/boards
+  const [templateThumbnails, setTemplateThumbnails] = useState<string[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/assets/boards/manifest.json');
+        if (!res.ok) throw new Error('manifest not found');
+        const data: string[] = await res.json();
+        const thumbs = data.slice(0, 6);
+        setTemplateThumbnails(thumbs);
+        // ensure selectedTemplate in range
+        setSelectedTemplate((s) => Math.min(Math.max(1, s), Math.max(1, thumbs.length)));
+        // If manifest contains /assets/boards/3.jpg, select it and fill the template with that image
+        const target = thumbs.findIndex((p) => p.endsWith('/3.jpg') || p.endsWith('3.jpg'));
+        if (target !== -1) {
+          const image = thumbs[target];
+          const tplIndex = target + 1;
+          setSelectedTemplate(tplIndex);
+          const newForTemplate: Record<number, string> = {};
+          for (let i = 0; i < 15; i++) newForTemplate[i] = image;
+          setReplacements((prev) => ({ ...prev, [tplIndex]: newForTemplate }));
+          setDestaque({ src: image, tema: 'pessoal', deGaleria: true });
+        }
+      } catch (err) {
+        // fallback to bundled list
+        setTemplateThumbnails(['/assets/boards/2.jpg', '/assets/boards/3.jpg']);
+      }
+    };
+    load();
+  }, []);
+
+  const getSlotSrc = (imgSrc: string, slotIndex: number) => {
+    const rep = replacements[selectedTemplate];
+    if (rep && rep[slotIndex]) return rep[slotIndex];
+    return imgSrc;
+  };
+
+  const handleReplaceSlot = (slotIndex: number, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      setReplacements((prev) => {
+        const forTemplate = prev[selectedTemplate] ? { ...prev[selectedTemplate] } : {};
+        forTemplate[slotIndex] = dataUrl;
+        return { ...prev, [selectedTemplate]: forTemplate };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearSlot = (slotIndex: number) => {
+    setReplacements((prev) => {
+      const forTemplate = prev[selectedTemplate] ? { ...prev[selectedTemplate] } : {};
+      forTemplate[slotIndex] = "";
+      return { ...prev, [selectedTemplate]: forTemplate };
+    });
+  };
+
+  const fillTemplateWithImage = (imageSrc: string) => {
+    if (!imageSrc) return;
+    // create replacements for all 15 slots
+    const newForTemplate: Record<number, string> = {};
+    for (let i = 0; i < 15; i++) newForTemplate[i] = imageSrc;
+    setReplacements((prev) => ({ ...prev, [selectedTemplate]: newForTemplate }));
+    // set destaque to the used image
+    setDestaque({ src: imageSrc, tema: 'pessoal', deGaleria: true });
+  };
+
+  const verses = [
+    'Tudo posso naquele que me fortalece. (Filipenses 4:13)',
+    'A fé move montanhas. (Mateus 17:20)',
+    'O Senhor é o meu pastor; nada me faltará. (Salmos 23:1)',
+    'Confia no Senhor de todo o teu coração. (Provérbios 3:5)',
+    'Entrega o teu caminho ao Senhor; confia nele. (Salmos 37:5)'
+  ];
+
+  const verseForSlot = (slotIndex: number) => verses[slotIndex % verses.length];
+
   return (
     <div className="container">
       <div className="card">
@@ -266,6 +364,36 @@ export default function Home() {
           </button>
         </div>
 
+        {/* Toggle estilo de madeira */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+          <button
+            onClick={() => setWoodStyle("plaque")}
+            style={{
+              padding: "0.4rem 0.8rem",
+              borderRadius: "8px",
+              cursor: "pointer",
+              border: woodStyle === "plaque" ? "2px solid #d4af37" : "1px solid rgba(0,0,0,0.08)",
+              background: woodStyle === "plaque" ? "rgba(212,175,55,0.12)" : "white",
+              fontWeight: 600
+            }}
+          >
+            Placa
+          </button>
+          <button
+            onClick={() => setWoodStyle("rustic")}
+            style={{
+              padding: "0.4rem 0.8rem",
+              borderRadius: "8px",
+              cursor: "pointer",
+              border: woodStyle === "rustic" ? "2px solid #8b5a2b" : "1px solid rgba(0,0,0,0.08)",
+              background: woodStyle === "rustic" ? "rgba(139,90,43,0.12)" : "white",
+              fontWeight: 600
+            }}
+          >
+            Rústico
+          </button>
+        </div>
+
         <h1 style={{ color: "#2c2c2c", textShadow: "2px 2px 4px rgba(212, 175, 55, 0.3)" }}>{t.title}</h1>
         <p style={{ 
           textAlign: "center", 
@@ -278,6 +406,21 @@ export default function Home() {
         }}>
           {t.slogan}
         </p>
+
+        {/* Seletor simples de template (substitui slider) */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Modelos:
+            <select value={selectedTemplate} onChange={(e) => setSelectedTemplate(Number(e.target.value))} style={{ padding: '0.5rem', borderRadius: 8 }}>
+              {templateThumbnails.map((_, idx) => (
+                <option key={idx} value={idx + 1}>{`Mural ${idx + 1}`}</option>
+              ))}
+            </select>
+          </label>
+          <button onClick={() => fillTemplateWithImage(destaque.src)} style={{ marginLeft: 12, padding: '0.5rem 0.8rem', borderRadius: 8, background: '#d4af37', color: 'white', border: 'none', cursor: 'pointer' }}>
+            Usar imagem atual para criar mural
+          </button>
+        </div>
 
         {/* Opção para incluir frases motivacionais */}
         <div style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(212, 175, 55, 0.1)", borderRadius: "12px", border: "2px solid rgba(212, 175, 55, 0.3)" }}>
@@ -354,6 +497,81 @@ export default function Home() {
           </div>
         </section>
 
+        {/* MURAL 6: Personalizado / Placeholder */}
+        <section style={{ display: selectedTemplate === 6 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+            <h2 style={{ color: "#2c2c2c", margin: 0 }}>⭐ {lang === 'pt' ? 'Mural 6 - Personalizado' : 'Vision Board 6 - Custom'}</h2>
+            <button
+              onClick={() => handleSelecionarMural(6)}
+              style={{
+                padding: "0.6rem 1.5rem",
+                background: "linear-gradient(135deg, #d4af37, #c9a961)",
+                border: "none",
+                borderRadius: "8px",
+                color: "white",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "0.9rem",
+                boxShadow: "0 4px 12px rgba(212, 175, 55, 0.3)",
+                transition: "all 0.3s ease"
+              }}
+            >
+              📥 {lang === 'pt' ? 'Selecionar Este Mural' : 'Select This Mural'}
+            </button>
+          </div>
+          <div id="mural-6" style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(5, 1fr)", 
+            gridTemplateRows: "repeat(3, 220px)",
+            gap: "0.3rem",
+            background: "#f6f3ee",
+            padding: "0.3rem",
+            borderRadius: "8px"
+          }}>
+            {imagensFinais.slice(0, 15).map((img, i) => {
+              const slotSrc = getSlotSrc(img.src, i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    border: destaque.src === img.src ? "4px solid #d4af37" : "none",
+                    boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
+                  }}
+                >
+                  <input id={`replace-6-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-6-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  ) : (
+                    <img
+                      src={slotSrc}
+                      alt={img.tema}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block"
+                      }}
+                      onClick={() => setDestaque(img)}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         {/* OPÇÃO DE GALERIA */}
         <section style={{ background: "rgba(255, 255, 255, 0.7)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
           <h2 style={{ color: "#2c2c2c" }}>{t.imageChoice}</h2>
@@ -404,7 +622,11 @@ export default function Home() {
         {/* MURAIS DE SONHOS - 5 murais diferentes com 15 fotos cada */}
         
         {/* MURAL 1: Grid Uniforme 5x3 */}
-        <section style={{ background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+        <section style={{ display: selectedTemplate === 1 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <h2 style={{ color: "#2c2c2c", margin: 0 }}>🖼️ {lang === 'pt' ? 'Mural 1 - Visão Clássica' : lang === 'en' ? 'Vision Board 1 - Classic View' : 'Mural 1 - Visión Clásica'}</h2>
             <button
@@ -436,40 +658,52 @@ export default function Home() {
             padding: "0.3rem",
             borderRadius: "8px"
           }}>
-            {imagensFinais.slice(0, 15).map((img, i) => (
-              <div 
-                key={i} 
-                style={{ 
-                  cursor: "pointer",
-                  overflow: "hidden",
-                  position: "relative",
-                  border: destaque.src === img.src ? "4px solid #d4af37" : "none",
-                  boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
-                }} 
-                onClick={() => setDestaque(img)}
-              >
-                {img.src.startsWith('data:image/svg') ? (
-                  <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(img.src.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
-                ) : (
-                  <img 
-                    src={img.src} 
-                    alt={img.tema}
-                    style={{ 
-                      width: "100%", 
-                      height: "100%", 
-                      objectFit: "cover",
-                      objectPosition: "center",
-                      display: "block"
-                    }}
-                  />
-                )}
-              </div>
-            ))}
+            {imagensFinais.slice(0, 15).map((img, i) => {
+              const slotSrc = getSlotSrc(img.src, i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    border: destaque.src === img.src ? "4px solid #d4af37" : "none",
+                    boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
+                  }}
+                >
+                  <input id={`replace-1-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-1-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  ) : (
+                    <img
+                      src={slotSrc}
+                      alt={img.tema}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block"
+                      }}
+                      onClick={() => setDestaque(img)}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {/* MURAL 2: Grid Assimétrico Compacto */}
-        <section style={{ background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+        <section style={{ display: selectedTemplate === 2 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <h2 style={{ color: "#2c2c2c", margin: 0 }}>🎨 {lang === 'pt' ? 'Mural 2 - Mosaico Criativo' : lang === 'en' ? 'Vision Board 2 - Creative Mosaic' : 'Mural 2 - Mosaico Creativo'}</h2>
             <button
@@ -519,32 +753,38 @@ export default function Home() {
                 { gridColumn: "span 3", gridRow: "span 1" }, // 13: horizontal
                 { gridColumn: "span 2", gridRow: "span 2" }  // 14: vertical
               ];
+              const slotSrc = getSlotSrc(img.src, i);
               return (
-                <div 
-                  key={i} 
-                  style={{ 
+                <div
+                  key={i}
+                  style={{
                     ...layouts[i],
                     cursor: "pointer",
                     overflow: "hidden",
                     position: "relative",
                     border: destaque.src === img.src ? "4px solid #d4af37" : "none",
                     boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
-                  }} 
-                  onClick={() => setDestaque(img)}
+                  }}
                 >
-                  {img.src.startsWith('data:image/svg') ? (
-                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(img.src.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  <input id={`replace-2-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-2-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
                   ) : (
-                    <img 
-                      src={img.src} 
+                    <img
+                      src={slotSrc}
                       alt={img.tema}
-                      style={{ 
-                        width: "100%", 
-                        height: "100%", 
+                      style={{
+                        width: "100%",
+                        height: "100%",
                         objectFit: "cover",
                         objectPosition: "center",
                         display: "block"
                       }}
+                      onClick={() => setDestaque(img)}
                     />
                   )}
                 </div>
@@ -554,7 +794,11 @@ export default function Home() {
         </section>
 
         {/* MURAL 3: Grid 3 Colunas Vertical */}
-        <section style={{ background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+        <section style={{ display: selectedTemplate === 3 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <h2 style={{ color: "#2c2c2c", margin: 0 }}>📸 {lang === 'pt' ? 'Mural 3 - Painel Vertical' : lang === 'en' ? 'Vision Board 3 - Vertical Panel' : 'Mural 3 - Panel Vertical'}</h2>
             <button
@@ -586,40 +830,52 @@ export default function Home() {
             padding: "0.3rem",
             borderRadius: "8px"
           }}>
-            {imagensFinais.slice(0, 15).map((img, i) => (
-              <div 
-                key={i} 
-                style={{ 
-                  cursor: "pointer",
-                  overflow: "hidden",
-                  position: "relative",
-                  border: destaque.src === img.src ? "4px solid #d4af37" : "none",
-                  boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
-                }} 
-                onClick={() => setDestaque(img)}
-              >
-                {img.src.startsWith('data:image/svg') ? (
-                  <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(img.src.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
-                ) : (
-                  <img 
-                    src={img.src} 
-                    alt={img.tema}
-                    style={{ 
-                      width: "100%", 
-                      height: "100%", 
-                      objectFit: "cover",
-                      objectPosition: "center",
-                      display: "block"
-                    }}
-                  />
-                )}
-              </div>
-            ))}
+            {imagensFinais.slice(0, 15).map((img, i) => {
+              const slotSrc = getSlotSrc(img.src, i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    border: destaque.src === img.src ? "4px solid #d4af37" : "none",
+                    boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
+                  }}
+                >
+                  <input id={`replace-3-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-3-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  ) : (
+                    <img
+                      src={slotSrc}
+                      alt={img.tema}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block"
+                      }}
+                      onClick={() => setDestaque(img)}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {/* MURAL 4: Grid Magazine Style */}
-        <section style={{ background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+        <section style={{ display: selectedTemplate === 4 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <h2 style={{ color: "#2c2c2c", margin: 0 }}>🏛️ {lang === 'pt' ? 'Mural 4 - Estilo Revista' : lang === 'en' ? 'Vision Board 4 - Magazine Style' : 'Mural 4 - Estilo Revista'}</h2>
             <button
@@ -669,32 +925,38 @@ export default function Home() {
                 { gridColumn: "span 2", gridRow: "span 1" }, // 13: horizontal
                 { gridColumn: "span 2", gridRow: "span 1" }  // 14: horizontal
               ];
+              const slotSrc = getSlotSrc(img.src, i);
               return (
-                <div 
-                  key={i} 
-                  style={{ 
+                <div
+                  key={i}
+                  style={{
                     ...layouts[i],
                     cursor: "pointer",
                     overflow: "hidden",
                     position: "relative",
                     border: destaque.src === img.src ? "4px solid #d4af37" : "none",
                     boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
-                  }} 
-                  onClick={() => setDestaque(img)}
+                  }}
                 >
-                  {img.src.startsWith('data:image/svg') ? (
-                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(img.src.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  <input id={`replace-4-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-4-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
                   ) : (
-                    <img 
-                      src={img.src} 
+                    <img
+                      src={slotSrc}
                       alt={img.tema}
-                      style={{ 
-                        width: "100%", 
-                        height: "100%", 
+                      style={{
+                        width: "100%",
+                        height: "100%",
                         objectFit: "cover",
                         objectPosition: "center",
                         display: "block"
                       }}
+                      onClick={() => setDestaque(img)}
                     />
                   )}
                 </div>
@@ -704,7 +966,11 @@ export default function Home() {
         </section>
 
         {/* MURAL 5: Grid Compacto Horizontal */}
-        <section style={{ background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+        <section style={{ display: selectedTemplate === 5 ? undefined : 'none', background: "rgba(255, 255, 255, 0.5)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(212, 175, 55, 0.3)", position: "relative" }}>
+          <div className="mural-badge">
+            <img src="/assets/logo/logo1.png" alt="logo" />
+            <span className="mural-year">2026</span>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
             <h2 style={{ color: "#2c2c2c", margin: 0 }}>🌅 {lang === 'pt' ? 'Mural 5 - Panorama Completo' : lang === 'en' ? 'Vision Board 5 - Full Panorama' : 'Mural 5 - Panorama Completo'}</h2>
             <button
@@ -736,35 +1002,43 @@ export default function Home() {
             padding: "0.3rem",
             borderRadius: "8px"
           }}>
-            {imagensFinais.slice(0, 15).map((img, i) => (
-              <div 
-                key={i} 
-                style={{ 
-                  cursor: "pointer",
-                  overflow: "hidden",
-                  position: "relative",
-                  border: destaque.src === img.src ? "4px solid #d4af37" : "none",
-                  boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
-                }} 
-                onClick={() => setDestaque(img)}
-              >
-                {img.src.startsWith('data:image/svg') ? (
-                  <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(img.src.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
-                ) : (
-                  <img 
-                    src={img.src} 
-                    alt={img.tema}
-                    style={{ 
-                      width: "100%", 
-                      height: "100%", 
-                      objectFit: "cover",
-                      objectPosition: "center",
-                      display: "block"
-                    }}
-                  />
-                )}
-              </div>
-            ))}
+            {imagensFinais.slice(0, 15).map((img, i) => {
+              const slotSrc = getSlotSrc(img.src, i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    border: destaque.src === img.src ? "4px solid #d4af37" : "none",
+                    boxShadow: destaque.src === img.src ? "0 0 20px rgba(212, 175, 55, 0.6)" : "none"
+                  }}
+                >
+                  <input id={`replace-5-${i}`} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleReplaceSlot(i, e.target.files)} />
+                  <div style={{ position: 'absolute', right: 8, top: 8, zIndex: 3, display: 'flex', gap: 6 }}>
+                    <button onClick={() => (document.getElementById(`replace-5-${i}`) as HTMLInputElement)?.click()} style={{ background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Editar imagem">✎</button>
+                    <button onClick={() => handleClearSlot(i)} style={{ background: 'rgba(255,255,255,0.9)', color: '#2c2c2c', border: 'none', borderRadius: 6, padding: '4px 6px', cursor: 'pointer' }} aria-label="Limpar imagem">✕</button>
+                  </div>
+                  {slotSrc.startsWith('data:image/svg') ? (
+                    <div dangerouslySetInnerHTML={{ __html: decodeURIComponent(slotSrc.split(',')[1]) }} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+                  ) : (
+                    <img
+                      src={slotSrc}
+                      alt={img.tema}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block"
+                      }}
+                      onClick={() => setDestaque(img)}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 

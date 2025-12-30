@@ -90,15 +90,26 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="auth-container" style={{ background: "linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="auth-container" style={{ 
+      background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%)", 
+      minHeight: "100vh", 
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center",
+      position: "relative",
+      overflow: "hidden"
+    }}>
       <div className="auth-card" style={{
-        background: "white",
+        background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 50%, #f0f0f0 100%)",
         borderRadius: "24px",
-        boxShadow: "0 20px 40px rgba(167, 139, 250, 0.15)",
+        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.8)",
         maxWidth: "480px",
         width: "100%",
         padding: "2.5rem",
-        margin: "1rem"
+        margin: "1rem",
+        border: "3px solid rgba(0, 0, 0, 0.1)",
+        transform: "perspective(1000px)",
+        animation: "cardFloat 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
       }}>
         {/* Seletor de Idioma */}
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem", gap: "0.75rem" }}>
@@ -109,14 +120,28 @@ export default function Cadastro() {
               onClick={() => setLang(l)}
               style={{
                 padding: "0.5rem 1rem",
-                background: lang === l ? "linear-gradient(135deg, #a78bfa, #c084fc)" : "rgba(167, 139, 250, 0.1)",
-                border: `2px solid ${lang === l ? "#a78bfa" : "rgba(167, 139, 250, 0.3)"}`,
+                background: lang === l ? "linear-gradient(135deg, #3498db, #2980b9)" : "rgba(52, 152, 219, 0.1)",
+                border: `2px solid ${lang === l ? "#3498db" : "rgba(52, 152, 219, 0.3)"}`,
                 borderRadius: "12px",
-                color: lang === l ? "white" : "#374151",
+                color: lang === l ? "white" : "#2c3e50",
                 cursor: "pointer",
                 fontSize: "0.875rem",
                 fontWeight: "600",
-                transition: "all 0.3s"
+                transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                boxShadow: lang === l ? "0 5px 15px rgba(52, 152, 219, 0.3)" : "none",
+                transform: lang === l ? "scale(1.05)" : "scale(1)"
+              }}
+              onMouseEnter={(e) => { 
+                if (lang !== l) {
+                  (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.1)"; 
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 5px 15px rgba(52, 152, 219, 0.2)";
+                }
+              }}
+              onMouseLeave={(e) => { 
+                if (lang !== l) {
+                  (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; 
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
+                }
               }}
             >
               {l === "pt" ? "🇧🇷 PT" : l === "en" ? "🇺🇸 EN" : "🇪🇸 ES"}
@@ -128,18 +153,19 @@ export default function Cadastro() {
           <h1 style={{ 
             fontSize: "2.5rem", 
             fontWeight: "bold", 
-            background: "linear-gradient(135deg, #a78bfa, #93c5fd)", 
+            background: "linear-gradient(135deg, #3498db, #2980b9)", 
             WebkitBackgroundClip: "text", 
             WebkitTextFillColor: "transparent",
-            backgroundClip: "text"
+            backgroundClip: "text",
+            animation: "titleShine 3s ease-in-out infinite"
           }}>
             {t.title}
           </h1>
-          <p style={{ color: "#6b7280", fontSize: "1.125rem" }}>{t.subtitle}</p>
+          <p style={{ color: "#34495e", fontSize: "1.125rem" }}>{t.subtitle}</p>
         </div>
 
         <div className="pricing-badge" style={{
-          background: "linear-gradient(135deg, #a78bfa, #c084fc)",
+          background: "linear-gradient(135deg, #3498db, #2980b9)",
           color: "white",
           padding: "1rem",
           borderRadius: "16px",
@@ -147,7 +173,8 @@ export default function Cadastro() {
           marginBottom: "2rem",
           fontWeight: "bold",
           fontSize: "1.5rem",
-          boxShadow: "0 10px 20px rgba(167, 139, 250, 0.3)"
+          boxShadow: "0 10px 25px rgba(52, 152, 219, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2)",
+          animation: "pricePulse 2s ease-in-out infinite"
         }}>
           <span className="price">€4,99</span>
           <span className="period" style={{ fontSize: "1rem", opacity: 0.9 }}> {t.month}</span>
@@ -162,7 +189,7 @@ export default function Cadastro() {
             { label: t.confirmPassword, placeholder: t.confirmPasswordPlaceholder, value: confirmarSenha, onChange: setConfirmarSenha, type: "password" as const },
           ].map((field, i) => (
             <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <label style={{ fontWeight: "600", color: "#374151" }}>{field.label}</label>
+              <label style={{ fontWeight: "600", color: "#2c3e50" }}>{field.label}</label>
               <input
                 type={field.type}
                 placeholder={field.placeholder}
@@ -172,22 +199,45 @@ export default function Cadastro() {
                 style={{
                   padding: "0.875rem 1rem",
                   borderRadius: "12px",
-                  border: "2px solid #e5e7eb",
+                  border: "2px solid rgba(44, 62, 80, 0.2)",
                   fontSize: "1rem",
-                  transition: "border 0.3s",
+                  transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.05)",
+                  color: "#2c3e50"
                 }}
-                onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#a78bfa"; }}
-                onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e5e7eb"; }}
+                onFocus={(e) => { 
+                  (e.target as HTMLInputElement).style.borderColor = "#3498db"; 
+                  (e.target as HTMLInputElement).style.boxShadow = "0 0 15px rgba(52, 152, 219, 0.4)";
+                  (e.target as HTMLInputElement).style.transform = "scale(1.02)";
+                }}
+                onBlur={(e) => { 
+                  (e.target as HTMLInputElement).style.borderColor = "rgba(44, 62, 80, 0.2)"; 
+                  (e.target as HTMLInputElement).style.boxShadow = "inset 0 2px 4px rgba(0, 0, 0, 0.05)";
+                  (e.target as HTMLInputElement).style.transform = "scale(1)";
+                }}
               />
             </div>
           ))}
 
-          <div className="benefits" style={{ background: "#faf5ff", padding: "1.5rem", borderRadius: "16px", margin: "1.5rem 0" }}>
-            <h3 style={{ color: "#7c3aed", marginBottom: "1rem" }}>{t.benefitsIncluded}</h3>
-            <ul style={{ listStyle: "none", padding: 0, color: "#4c1d95" }}>
+          <div className="benefits" style={{ 
+            background: "linear-gradient(135deg, #ecf0f1 0%, #ffffff 100%)", 
+            padding: "1.5rem", 
+            borderRadius: "16px", 
+            margin: "1.5rem 0",
+            border: "2px solid rgba(44, 62, 80, 0.1)",
+            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.08)"
+          }}>
+            <h3 style={{ color: "#2980b9", marginBottom: "1rem", fontWeight: "bold" }}>{t.benefitsIncluded}</h3>
+            <ul style={{ listStyle: "none", padding: 0, color: "#34495e" }}>
               {[t.benefit1, t.benefit2, t.benefit3, t.benefit4, t.benefit5].map((b, i) => (
-                <li key={i} style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ color: "#a78bfa", fontSize: "1.5rem" }}>✓</span> {b}
+                <li key={i} style={{ 
+                  marginBottom: "0.75rem", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "0.5rem",
+                  animation: `benefitSlide 0.5s ease-out ${i * 0.1}s backwards`
+                }}>
+                  <span style={{ color: "#3498db", fontSize: "1.5rem" }}>✓</span> {b}
                 </li>
               ))}
             </ul>
@@ -200,24 +250,32 @@ export default function Cadastro() {
               borderRadius: "16px",
               fontSize: "1.125rem",
               fontWeight: "bold",
-              background: "linear-gradient(135deg, #a78bfa, #c084fc)",
+              background: "linear-gradient(135deg, #3498db, #2980b9)",
               color: "white",
               border: "none",
               cursor: "pointer",
-              boxShadow: "0 10px 20px rgba(167, 139, 250, 0.3)",
-              transition: "transform 0.2s"
+              boxShadow: "0 10px 25px rgba(52, 152, 219, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2)",
+              transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              position: "relative",
+              overflow: "hidden"
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-4px)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}
+            onMouseEnter={(e) => { 
+              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-5px) scale(1.02)"; 
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 15px 35px rgba(52, 152, 219, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.2)";
+            }}
+            onMouseLeave={(e) => { 
+              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0) scale(1)"; 
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 10px 25px rgba(52, 152, 219, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2)";
+            }}
           >
             {t.subscribe}
           </button>
         </form>
 
-        <div className="auth-footer" style={{ textAlign: "center", marginTop: "2rem", color: "#6b7280" }}>
+        <div className="auth-footer" style={{ textAlign: "center", marginTop: "2rem", color: "#34495e" }}>
           <p>
             {t.haveAccount}{" "}
-            <Link href="/login" style={{ color: "#a78bfa", fontWeight: "600", textDecoration: "underline" }}>
+            <Link href="/login" style={{ color: "#3498db", fontWeight: "600", textDecoration: "underline" }}>
               {t.login}
             </Link>
           </p>
