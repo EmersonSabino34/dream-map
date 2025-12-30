@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [expiryWarning, setExpiryWarning] = useState<string | null>(null);
 
   useEffect(() => {
+    
     try {
       const raw = localStorage.getItem('purchaseInfo');
       if (raw) setPurchaseInfo(JSON.parse(raw));
