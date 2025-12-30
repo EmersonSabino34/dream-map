@@ -49,7 +49,6 @@ export default function CheckoutPage() {
     timer = setInterval(check, 1000 * 60 * 60);
     return () => clearInterval(timer);
   }, []);
-
   const pixQrRef = useRef<HTMLDivElement | null>(null);
   const mbQrRef = useRef<HTMLDivElement | null>(null);
   const mbwayQrRef = useRef<HTMLDivElement | null>(null);
