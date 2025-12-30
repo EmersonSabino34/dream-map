@@ -12,6 +12,7 @@ export default function Cadastro() {
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
   const t = {
+    
     pt: {
       title: "⭐ Comece sua jornada",
       subtitle: "Crie sua conta e transforme seus sonhos em realidade",
