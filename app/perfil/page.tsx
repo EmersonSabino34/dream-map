@@ -19,6 +19,7 @@ interface ProfileData {
     customDates: string[];
   };
 }
+
 type DateKey = Exclude<keyof ProfileData["commemorativeDates"], "customDates">;
 
 export default function Perfil() {
