@@ -49,6 +49,7 @@ export default function Perfil() {
     } catch (e) {}
   }, []);
 
+  
   const t = {
     pt: {
       title: "🎨 Crie Seu Mural dos Sonhos",
