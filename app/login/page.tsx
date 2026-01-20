@@ -49,7 +49,6 @@ export default function Login() {
     }
   }[lang];
 
-  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Login:", { email, senha });
