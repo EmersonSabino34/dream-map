@@ -8,6 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
+  
   const t = {
     pt: {
       welcome: "⭐ Bem-vindo de volta!",
