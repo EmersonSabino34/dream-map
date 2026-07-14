@@ -89,6 +89,7 @@ export default function Cadastro() {
     console.log("Cadastro:", { nome, email, senha });
   };
 
+  
   return (
     <div className="auth-container" style={{ 
       background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%)", 
