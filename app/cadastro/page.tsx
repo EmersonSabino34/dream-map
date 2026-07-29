@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import "../auth.css";
 
+
 export default function Cadastro() {
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
   const [nome, setNome] = useState("");
